@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Recipe {
+  id              Int          @id @default(autoincrement())
+  name            String
+  categoryID      Int          @map("category_id")
+  category        Category     @relation(fields: [categoryID], references: [id])
+  preparationTime String       @map("preparation_time")
+  cookingTime     String       @map("cooking_time")
+  instructions    String
+  ingredients     Ingredient[]
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+  deletedAt       DateTime?    @map("deleted_at")
+
+  @@map("recipe")
+}
+
+model Ingredient {
+  id         Int       @id @default(autoincrement())
+  name       String
+  quantityID Int       @map("quantity_id")
+  quantity   Quantity  @relation(fields: [quantityID], references: [id])
+  recipes    Recipe[]
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  deletedAt  DateTime? @map("deleted_at")
+
+  @@map("ingredient")
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String
+  recipes   Recipe[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("category")
+}
+
+model Quantity {
+  id         Int          @id @default(autoincrement())
+  grams      Int
+  cup        Int
+  spoon      Int
+  Ingredient Ingredient[]
+  createdAt  DateTime     @default(now()) @map("created_at")
+  updatedAt  DateTime     @updatedAt @map("updated_at")
+  deletedAt  DateTime?    @map("deleted_at")
+
+  @@map("quantity")
+}
